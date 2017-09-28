@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JSON Processor - {% block title_block %}{% endblock %}</title>
+</head>
+<nav>
+  <ul>
+    <li><a href="{% url 'json_processor:index' %}">Home</a></li>
+    <li><a href="{% url 'json_processor:upload_data' %}">Upload Data</a></li>
+  </ul>
+</nav>
+<body>
+{% block body_block %}
+{% endblock %}
+</body>
+</html>

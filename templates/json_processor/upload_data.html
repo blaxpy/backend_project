@@ -1,0 +1,14 @@
+{% extends 'json_processor/base.html' %}
+
+{% block title_block %}
+  Upload Data
+{% endblock %}
+
+{% block body_block %}
+  <h1>Upload test data set</h1>
+  <form id="input_data_form" method="post" action="{% url 'json_processor:upload_data' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit" name="submit">
+  </form>
+{% endblock %}
