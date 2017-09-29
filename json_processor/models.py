@@ -21,7 +21,7 @@ class TestInfo(models.Model):
 class TestException(models.Model):
     test_request = models.IntegerField()
     input_data = models.ForeignKey(InputData)
-    item_array_index = models.IntegerField()
+    array_item_index = models.IntegerField()
     exception_text = models.CharField(max_length=100)
 
     def __str__(self):
