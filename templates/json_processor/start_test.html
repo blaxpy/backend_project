@@ -1,0 +1,22 @@
+{% extends 'json_processor/base.html' %}
+
+{% block title_block %}
+  Start Test
+{% endblock %}
+
+{% block body_block %}
+  <h1>Start Test</h1>
+  {% if object_list %}
+    <h2>Following data sets will be used to test function:</h2>
+    {% for input_data in object_list %}
+      <p>{{ input_data.data_array }}</p>
+    {% endfor %}
+    <form id="start_test_form" method="post" action="{% url 'json_processor:start_test' %}">
+      {% csrf_token %}
+      <input type="submit" name="submit" value="Start function test">
+    </form>
+  {% else %}
+    <p>No testing data</p>
+    <p><a href="{% url 'json_processor:upload_data' %}">Upload Data</a></p>
+  {% endif %}
+{% endblock %}
