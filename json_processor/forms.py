@@ -34,3 +34,7 @@ class InputDataForm(forms.ModelForm):
         else:
             raise forms.ValidationError('Input does not match required format: input must be of (list) type')
         return json_data
+
+
+class StartTestForm(forms.Form):
+    field = forms.Field(required=False)
