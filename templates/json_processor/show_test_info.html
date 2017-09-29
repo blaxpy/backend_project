@@ -1,0 +1,29 @@
+{% extends 'json_processor/base.html' %}
+
+{% block title_block %}
+  Last Test
+{% endblock %}
+
+{% block body_block %}
+  <h1>Test Info</h1>
+  {% if zipped_info_list %}
+    <h2>Test request #{{ test_request }}</h2>
+    <p>Overall status: <strong>{% if exception_list %}False{% else %}True{% endif %}</strong></p>
+    {% for info in zipped_info_list %}
+      <p>Test info for input data #{{ forloop.counter }}:</p>
+      <ul>
+        {% for i_d, res in info %}
+          <li>{{ i_d }} - {{ res }}</li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
+    {% if exception_list %}
+      <h2>During the test following exceptions occurred:</h2>
+      {% for i_d_id, i_d, exc_text in exception_list %}
+        <ul>
+          <li>Input data #{{ i_d_id }}: {{ i_d }} - {{ exc_text }}</li>
+        </ul>
+      {% endfor %}
+    {% endif %}
+  {% endif %}
+{% endblock %}
