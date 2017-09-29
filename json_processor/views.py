@@ -19,9 +19,11 @@ class UploadDataView(generic.FormView):
     form_class = InputDataForm
 
     def form_valid(self, form):
-        input_data = form.save()
-        print(input_data, repr(input_data.data_array))
-        return redirect('index')
+        form.save()
+
+        messages.success(self.request, 'Data set was successfully uploaded.')
+
+        return redirect('json_processor:upload_data')
 
 
 class StartTestView(generic.FormView, generic.ListView):
@@ -48,6 +50,6 @@ class StartTestView(generic.FormView, generic.ListView):
             test_info = TestInfo.objects.create(test_request=last_test_request, input_data=obj, result=result)
             test_info.save()
 
-        messages.success(self.request, 'We are testing the function on the previously listed data sets! '
+        messages.success(self.request, 'We are testing the function on the previously listed data sets. '
                                        'Wait a moment and refresh this page.')
         return redirect('index')

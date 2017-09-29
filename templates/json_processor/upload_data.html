@@ -6,6 +6,12 @@
 
 {% block body_block %}
   <h1>Upload test data set</h1>
+  {% if messages %}
+    {% for message in messages %}
+      <p>{{ message }}</p>
+    {% endfor %}
+
+  {% endif %}
   <form id="input_data_form" method="post" action="{% url 'json_processor:upload_data' %}">
     {% csrf_token %}
     {{ form.as_p }}
