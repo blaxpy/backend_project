@@ -62,16 +62,18 @@ class ShowTestInfoView(generic.TemplateView):
         test_request = self.kwargs['test_request']
         if test_request == 'last':
             test_request = TestInfo.objects.last().test_request
+
         test_info = TestInfo.objects.filter(test_request=test_request)
         test_exception = TestException.objects.filter(test_request=test_request)
-        zipped_info_list = []
+
+        zipped_info_list = None
         if test_info:
-            for t_i in test_info:
-                zipped_info_list.append(zip(t_i.input_data.data_array, t_i.result))
-        exception_list = []
+            zipped_info_list = (zip(t_i.input_data.data_array, t_i.result) for t_i in test_info)
+
+        exception_list = None
         if test_exception:
-            for t_e in test_exception:
-                exception_list.append((t_e.input_data_id, t_e.input_data.data_array[t_e.array_item_index], t_e.exception_text))
+            exception_list = ((t_e.input_data_id, t_e.input_data.data_array[t_e.array_item_index], t_e.exception_text)
+                              for t_e in test_exception)
 
         kwargs['test_request'] = test_request
         kwargs['zipped_info_list'] = zipped_info_list
