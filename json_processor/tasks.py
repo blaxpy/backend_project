@@ -1,45 +1,49 @@
 import json
-import math
 
-from json_processor.models import InputData, TestException
+from .models import InputData, TestInfo, TestException
+from .utils import is_prime
 
 from celery import shared_task
 
 
 @shared_task
-def test_func(json_request, test_request, input_data_id):
+def get_json_request(input_data_id):
+    input_data = InputData.objects.get(id=input_data_id)
+    json_request = json.dumps(input_data.data_array)
+    return json_request
+
+
+@shared_task
+def test_func(json_request):
     json_data = json.loads(json_request)
+
     result = []
+    test_exceptions = []
     for array_item_index, data_dict in enumerate(json_data):
-        result.append(process_json_dict(data_dict, test_request, input_data_id, array_item_index))
-    json_response = repr(result).replace("'", '"')
-    return json_response
+        try:
+            a = data_dict['a']
+            b = data_dict['b']
+            assert is_prime(a), "'a' is not prime number"
+            assert is_prime(b), "'b' is not prime number"
+            result.append({'result': a + b})
+        except AssertionError as e:
+            result.append({'result': 0})
+            test_exceptions.append((array_item_index, repr(e)))
+
+    json_response = json.dumps(result)
+    return json_response, test_exceptions
 
 
-def process_json_dict(data_dict, test_request, input_data_id, array_item_index):
-    a = data_dict['a']
-    b = data_dict['b']
-    try:
-        assert is_prime(a), "'a' is not prime number"
-        assert is_prime(b), "'b' is not prime number"
-    except AssertionError as e:
-        input_data = InputData.objects.get(id=input_data_id)
-        test_exception = TestException.objects.create(test_request=test_request, input_data=input_data,
-                                                      array_item_index=array_item_index, exception_text=repr(e))
-        test_exception.save()
-        return {'result': 0}
-    return {'result': a + b}
+@shared_task
+def save_json_response_and_exc(test_func_return_tuple, test_request, input_data_id):
+    json_response, test_exceptions = test_func_return_tuple
+    result = json.loads(json_response)
 
+    input_data = InputData.objects.get(id=input_data_id)
+    test_info = TestInfo.objects.create(test_request=test_request, input_data=input_data, result=result)
+    test_info.save()
 
-def is_prime(n):
-    if n == 2:
-        return True
-    if n % 2 == 0 or n <= 1:
-        return False
-
-    sqr = int(math.sqrt(n)) + 1
-
-    for divisor in range(3, sqr, 2):
-        if n % divisor == 0:
-            return False
-    return True
+    if test_exceptions:
+        TestException.objects.bulk_create(
+            [TestException(test_info=test_info, array_item_index=ind, exception_text=exc_text) for ind, exc_text in
+             test_exceptions])
