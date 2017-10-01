@@ -1,4 +1,5 @@
 {% extends 'json_processor/base.html' %}
+{% load json_processor_template_tags %}
 
 {% block title_block %}
   Last Test
@@ -18,7 +19,7 @@
       <p>Test info for input data #{{ forloop.counter }}:</p>
       <ul>
         {% for i_d, res in info %}
-          <li>{{ i_d }} - {{ res }}</li>
+          <li>{{ i_d|to_double_quotes }} - {{ res|to_double_quotes }}</li>
         {% endfor %}
       </ul>
     {% endfor %}
@@ -27,7 +28,7 @@
       {% for exc in exception_list %}
         <ul>
           {% for i_d_id, i_d, exc_text in exc %}
-            <li>Input data #{{ i_d_id }}: {{ i_d }} - {{ exc_text }}</li>
+            <li>Input data #{{ i_d_id }}: {{ i_d|to_double_quotes }} - {{ exc_text }}</li>
           {% endfor %}
         </ul>
       {% endfor %}

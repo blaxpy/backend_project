@@ -30,7 +30,7 @@ class InputDataForm(forms.ModelForm):
                 except KeyError as e:
                     raise forms.ValidationError(
                         'Input does not match required format: in dictionary %s key "%s" doesn\'t exist' % (
-                            repr(item), e.args[0]))
+                            repr(item).replace("'", '"'), e.args[0]))
         else:
             raise forms.ValidationError('Input does not match required format: input must be of (list) type')
         return json_data
