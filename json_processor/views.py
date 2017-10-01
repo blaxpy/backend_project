@@ -41,7 +41,7 @@ class StartTestView(generic.FormView, generic.ListView):
         else:
             test_request = 1
 
-        for input_data_id in range(1, input_data_count):
+        for input_data_id in range(1, input_data_count + 1):
             chain(get_json_request.s(input_data_id)
                   | test_func.s()
                   | save_json_response_and_exc.s(test_request, input_data_id))()
