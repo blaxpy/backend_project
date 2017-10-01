@@ -57,16 +57,14 @@ class ShowTestInfoView(generic.TemplateView):
     def get_context_data(self, **kwargs):
         test_request = self.kwargs['test_request']
         if test_request == 'last':
-            test_request = TestInfo.objects.last().test_request
+            last_test_request = TestInfo.objects.last()
+            test_request = last_test_request.test_request if last_test_request else 1
 
         test_info = TestInfo.objects.filter(test_request=test_request)
-
-        zipped_info_list = None
-        exception_list = None
+        zipped_info_list = []
+        exception_list = []
 
         if test_info:
-            zipped_info_list = []
-            exception_list = []
             for t_i in test_info:
                 zipped_info_list.append(zip(t_i.input_data.data_array, t_i.result))
 
