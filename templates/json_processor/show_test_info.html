@@ -32,5 +32,7 @@
         </ul>
       {% endfor %}
     {% endif %}
+  {% elif not messages %}
+    <p>Requested Test Info does not exist.</p>
   {% endif %}
 {% endblock %}
