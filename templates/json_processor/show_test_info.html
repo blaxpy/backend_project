@@ -19,9 +19,11 @@
     {% endfor %}
     {% if exception_list %}
       <h2>During the test following exceptions occurred:</h2>
-      {% for i_d_id, i_d, exc_text in exception_list %}
+      {% for exc in exception_list %}
         <ul>
-          <li>Input data #{{ i_d_id }}: {{ i_d }} - {{ exc_text }}</li>
+          {% for i_d_id, i_d, exc_text in exc %}
+            <li>Input data #{{ i_d_id }}: {{ i_d }} - {{ exc_text }}</li>
+          {% endfor %}
         </ul>
       {% endfor %}
     {% endif %}
