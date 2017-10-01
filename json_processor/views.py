@@ -1,13 +1,13 @@
-import json
-
 from django.shortcuts import redirect
 from django.views import generic
 from django.contrib import messages
 
-from .models import InputData, TestInfo, TestException
+from celery import chain
+
+from .models import InputData, TestInfo
 from .forms import InputDataForm, StartTestForm
 
-from .tasks import test_func
+from .tasks import get_json_request, test_func, save_json_response_and_exc
 
 
 class IndexView(generic.TemplateView):
@@ -34,21 +34,17 @@ class StartTestView(generic.FormView, generic.ListView):
         return InputData.objects.all()
 
     def form_valid(self, form):
-        input_data = InputData.objects.all()
+        input_data_count = InputData.objects.count()
         last_test_info = TestInfo.objects.last()
         if last_test_info:
             test_request = last_test_info.test_request + 1
         else:
             test_request = 1
 
-        for obj in input_data:
-            json_request = repr(obj.data_array).replace("'", '"')
-            result_object = test_func.delay(json_request=json_request, test_request=test_request,
-                                            input_data_id=obj.id)
-            json_response = result_object.get()
-            result = json.loads(json_response)
-            test_info = TestInfo.objects.create(test_request=test_request, input_data=obj, result=result)
-            test_info.save()
+        for input_data_id in range(1, input_data_count):
+            chain(get_json_request.s(input_data_id)
+                  | test_func.s()
+                  | save_json_response_and_exc.s(test_request, input_data_id))()
 
         messages.success(self.request, 'We are testing the function on the previously listed data sets. '
                                        'Wait a moment and refresh this page.')
