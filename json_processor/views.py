@@ -1,8 +1,8 @@
+from celery import chain
+
 from django.shortcuts import redirect
 from django.views import generic
 from django.contrib import messages
-
-from celery import chain
 
 from .models import InputData, TestInfo
 from .forms import InputDataForm, StartTestForm

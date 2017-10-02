@@ -77,10 +77,14 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'backend_project',
-        'USER': 'denis',
+        # 'USER': 'denis',
+        'USER': 'django',
         'PASSWORD': 'iwbpn2gtj',
         'HOST': '127.0.0.1',
         'PORT': '5433',
+        'TEST': {
+            'NAME': 'test_backend_project'
+        }
     }
 }
 
