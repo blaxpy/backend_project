@@ -1,0 +1,23 @@
+My solution to a test task.
+The goal was to create a Django application for testing a function which receives array of dictionaries each containing two elements of type (int) in JSON format, computes a sum of prime numbers for all dictionaries and then returns its computation results also in JSON.
+
+Input data format example:
+    '[{"a": 2, "b": 3}, {"a": 3, "b": 5}, {"a": 8, "b": 7}, {"a": 7, "b": 11}]'
+
+Result format example:
+    '[{"result": 5}, {"result": 8}, {"result": 0}, {"result": 18}]'
+
+Key requirements:
+    User can upload new data arrays via web interface and they must be saved to a database;
+    User can launch a test to check the function's work on all accumulated data;
+    If exception occurs it must be saved to a database;
+    All testing results must be saved to a database;
+    Last test info page must display an overall status: if exception occurred - False, else True
+    Last test info page must contain a result and exceptions for each data array.
+
+Realization requirements:
+    Framework - Django;
+    ORM - Django ORM;
+    RDBMS - PostgreSQL;
+    Task queues must be organized using Celery and RabbitMQ;
+    Each data array must be processed in the background in a queue of three tasks, each task must be executed in a different worker.
